@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>부동산경영과 - 진로·취업 분석</title>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;900&family=Noto+Serif+KR:wght@400;700&display=swap');
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: 'Noto Sans KR', -apple-system, sans-serif;
+    background: #f8f9fb;
+    color: #1a202c;
+    line-height: 1.7;
+    font-size: 14px;
+}
+.container { max-width: 1100px; margin: 0 auto; padding: 24px 40px; background: white; box-shadow: 0 2px 12px rgba(0,0,0,0.04); }
+.cover {
+    background: linear-gradient(135deg, #1a365d 0%, #2c5282 100%);
+    color: white;
+    padding: 60px 50px;
+    margin: -24px -40px 32px -40px;
+    text-align: center;
+}
+.cover h1 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    letter-spacing: -0.5px;
+}
+.cover .sub { font-size: 16px; font-weight: 300; opacity: 0.9; margin-bottom: 24px; }
+.cover .meta { font-size: 13px; opacity: 0.7; }
+.cover .meta strong { color: #fbd38d; }
+
+h2 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: #1a365d;
+    margin: 40px 0 16px 0;
+    padding-bottom: 8px;
+    border-bottom: 3px solid #2c5282;
+}
+h3 {
+    font-size: 17px;
+    font-weight: 700;
+    color: #2d3748;
+    margin: 24px 0 12px 0;
+    padding-left: 12px;
+    border-left: 4px solid #4299e1;
+}
+h4 { font-size: 15px; font-weight: 700; color: #2d3748; margin: 16px 0 8px 0; }
+p { margin: 8px 0; color: #2d3748; }
+.lead { font-size: 15px; color: #4a5568; margin-bottom: 16px; }
+
+table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+thead { background: #edf2f7; }
+thead th { font-weight: 600; color: #2d3748; }
+tbody tr:nth-child(even) { background: #f7fafc; }
+.numeric td:not(:first-child) { text-align: right; font-variant-numeric: tabular-nums; }
+
+.tag {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-right: 4px;
+}
+.tag-국가기술 { background: #c3dafe; color: #1e3a8a; }
+.tag-면허증 { background: #fed7aa; color: #7c2d12; }
+.tag-민간 { background: #d8b4fe; color: #581c87; }
+.tag-미분류 { background: #e2e8f0; color: #4a5568; }
+
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 14px;
+    margin: 18px 0;
+}
+.kpi-card {
+    background: white;
+    padding: 16px 18px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    border-top: 4px solid #2c5282;
+}
+.kpi-card.success { border-top-color: #38a169; }
+.kpi-card.warn { border-top-color: #d69e2e; }
+.kpi-card.danger { border-top-color: #c53030; }
+.kpi-card .label { font-size: 12px; color: #718096; margin-bottom: 4px; font-weight: 500; }
+.kpi-card .value { font-size: 24px; font-weight: 700; color: #1a365d; }
+.kpi-card .unit { font-size: 13px; color: #a0aec0; font-weight: 400; margin-left: 3px; }
+.kpi-card .note { font-size: 11px; color: #718096; margin-top: 4px; }
+
+.method-box, .insight-box, .limit-box {
+    border-left: 4px solid;
+    padding: 14px 18px;
+    margin: 14px 0;
+    border-radius: 4px;
+    font-size: 13px;
+}
+.method-box { background: #ebf8ff; border-color: #4299e1; }
+.insight-box { background: #f0fff4; border-color: #38a169; }
+.limit-box { background: #fffaf0; border-color: #d69e2e; }
+
+.method-box strong, .insight-box strong, .limit-box strong { color: #1a365d; }
+.method-box ul, .insight-box ul, .limit-box ul { margin: 8px 0 0 20px; }
+
+.source-table th { background: #1a365d; color: white; }
+.source-table { font-size: 13px; table-layout: fixed; }
+.source-table th:first-child, .source-table td:first-child {
+    width: 50px; text-align: center; font-weight: 700;
+}
+.source-table th:nth-child(2), .source-table td:nth-child(2) { width: 32%; }
+.source-table th:nth-child(3), .source-table td:nth-child(3) { width: 38%; }
+.source-table th:nth-child(4), .source-table td:nth-child(4) { width: 24%; }
+
+.dept-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+    margin: 18px 0;
+}
+.dept-card-link {
+    display: block;
+    background: white;
+    border: 1px solid #e2e8f0;
+    padding: 12px 14px;
+    border-radius: 6px;
+    text-decoration: none;
+    color: inherit;
+    border-left: 4px solid #cbd5e0;
+    transition: all 0.15s;
+}
+.dept-card-link.match-high { border-left-color: #38a169; }
+.dept-card-link.match-mid { border-left-color: #d69e2e; }
+.dept-card-link.match-low { border-left-color: #a0aec0; }
+.dept-card-link.match-na { border-left-color: #cbd5e0; background: #fafbfc; }
+.dept-card-link:hover { background: #f7fafc; border-color: #4299e1; transform: translateX(2px); }
+.dept-card-link .name { font-weight: 700; font-size: 14px; color: #1a365d; }
+.dept-card-link .stat { font-size: 11px; color: #718096; margin-top: 4px; }
+
+.toc { background: #f7fafc; padding: 16px 24px; border-radius: 8px; margin: 24px 0; }
+.toc h3 { border: none; padding: 0; margin-bottom: 8px; }
+.toc ol { margin-left: 20px; color: #2d3748; }
+.toc li { margin: 4px 0; }
+.toc a { color: #2c5282; text-decoration: none; }
+.toc a:hover { text-decoration: underline; }
+
+.chart-wrap { background: white; padding: 8px; border: 1px solid #e2e8f0; border-radius: 8px; margin: 12px 0; }
+.footer { margin-top: 60px; padding: 20px 0; border-top: 1px solid #e2e8f0; text-align: center; color: #a0aec0; font-size: 12px; }
+
+@media print {
+    body { background: white; font-size: 10.5pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .container { box-shadow: none; max-width: none; padding: 0; }
+    .cover { margin: 0; padding: 30px 40px; }
+    .cover h1 { font-size: 24pt; }
+    h2 { page-break-before: always; font-size: 18pt; }
+    h2:first-of-type { page-break-before: avoid; }
+    h3 { font-size: 13pt; }
+    h4 { font-size: 11pt; }
+    table { font-size: 9.5pt; page-break-inside: auto; }
+    tr { page-break-inside: avoid; }
+    .dept-card-link, .kpi-card, .insight-box, .method-box, .limit-box, .source-table { break-inside: avoid; }
+    .toc { page-break-after: always; }
+    .footer { font-size: 9pt; }
+    a { color: inherit; text-decoration: none; }
+    .chart-wrap { break-inside: avoid; }
+}
+</style>
+
+</head>
+<body>
+<div class="container">
+
+<p style="margin-bottom:14px;"><a href="../index.html" style="color:#2c5282;text-decoration:none;font-weight:500;">← 메인 보고서로</a></p>
+
+<div class="cover" style="padding: 40px 50px;">
+  <h1 style="font-size: 26px;">부동산경영과</h1>
+  <div class="sub">경영·휴먼라이프학부 · 부동산중개사, 건물관리사, 부동산공급 기능인 - 지역부동산시장분석 : 국가의 부동산 정책분석, 지역 시장 및 개별 시장의 상황을 파악· 예측하는 능력</div>
+  <div class="meta">KEDI 매핑: <strong>부동산경영과</strong> &nbsp;|&nbsp;
+       특화프로그램: <strong>부동산경영과</strong></div>
+</div>
+
+<h2>📊 2024 KEDI 취업통계</h2>
+<div class="kpi-grid"><div class="kpi-card success"><div class="label">취업률</div><div class="value">55.1%</div></div><div class="kpi-card"><div class="label">유지취업률</div><div class="value">69.0%</div></div><div class="kpi-card warn"><div class="label">진학률</div><div class="value">8.2%</div></div><div class="kpi-card"><div class="label">평균급여</div><div class="value">234<span class="unit">만원</span></div></div><div class="kpi-card"><div class="label">대상자 수</div><div class="value">26<span class="unit">명</span></div></div></div>
+
+<h2>🎯 전공취업 vs 비전공취업 (직업 기준, 한국표준직업분류 소분류)</h2>
+<div class="chart-wrap"><div>                            <div id="e0bde3c2-10c0-4009-9aee-b0310245eac1" class="plotly-graph-div" style="height:340px; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("e0bde3c2-10c0-4009-9aee-b0310245eac1")) {                    Plotly.newPlot(                        "e0bde3c2-10c0-4009-9aee-b0310245eac1",                        [{"hole":0.55,"labels":["\uc804\uacf5\ucde8\uc5c5","\ube44\uc804\uacf5\ucde8\uc5c5"],"marker":{"colors":["#2c5282","#cbd5e0"]},"sort":false,"textinfo":"label+percent","textposition":"outside","texttemplate":"\u003cb\u003e%{label}\u003c\u002fb\u003e\u003cbr\u003e%{value:,}\uba85 (%{percent})","values":[17,5],"type":"pie"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"annotations":[{"font":{"color":"#1a365d","family":"Noto Sans KR","size":22},"showarrow":false,"text":"\u003cb\u003e77.3%\u003c\u002fb\u003e\u003cbr\u003e\u003cspan style='font-size:11px;color:#718096;'\u003e\uc804\uacf5\ucde8\uc5c5\u003c\u002fspan\u003e","x":0.5,"y":0.5}],"margin":{"t":30,"b":30,"l":30,"r":30},"height":340,"showlegend":false,"font":{"family":"Noto Sans KR","size":12}},                        {"displayModeBar": false, "responsive": true}                    )                };            </script>        </div></div>
+
+<h2>🎓 학교-학과-학생 자격증 정렬도</h2>
+
+        <div class="kpi-grid">
+          <div class="kpi-card"><div class="label">① 학교공식 특화</div><div class="value">5<span class='unit'>개</span></div></div>
+          <div class="kpi-card"><div class="label">② 학과 PDF</div><div class="value">4<span class='unit'>개</span></div></div>
+          <div class="kpi-card"><div class="label">③ KEDI 실제 보유</div><div class="value">15<span class='unit'>개</span></div></div>
+          <div class="kpi-card success"><div class="label">3중 교집합 (정렬도)</div><div class="value">0<span class='unit'>개</span></div></div>
+        </div>
+
+<h2>📚 자격증 비교 — 3중 출처</h2>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;">
+  <div>
+    <h4>① 학교 공식 특화프로그램</h4>
+    <table><thead><tr><th>자격증</th><th>카테고리</th></tr></thead><tbody><tr><td>감정평가사</td><td><span class='tag tag-면허증'>면허증</span></td></tr><tr><td>공인중개사</td><td><span class='tag tag-면허증'>면허증</span></td></tr><tr><td>주택관리사</td><td><span class='tag tag-미분류'>미분류</span></td></tr><tr><td>컴퓨터활용능력1급</td><td><span class='tag tag-국가기술'>국가기술</span></td></tr><tr><td>컴퓨터활용능력2급</td><td><span class='tag tag-국가기술'>국가기술</span></td></tr></tbody></table>
+  </div>
+  <div>
+    <h4>② 학과 소개 가이드북</h4>
+    <table><thead><tr><th>자격증</th><th>카테고리</th></tr></thead><tbody><tr><td>공인중개사</td><td><span class='tag tag-면허증'>면허증</span></td></tr><tr><td>감정평가사</td><td><span class='tag tag-면허증'>면허증</span></td></tr><tr><td>주택관리사</td><td><span class='tag tag-미분류'>미분류</span></td></tr><tr><td>컴퓨터활용능력</td><td><span class='tag tag-국가기술'>국가기술</span></td></tr></tbody></table>
+  </div>
+  <div>
+    <h4>③ 선배 실제 보유 (KEDI)</h4>
+    <table><thead><tr><th>자격증</th><th>인원</th></tr></thead><tbody><tr><td>워드프로세서(단일등급)</td><td style='text-align:right;'>6명</td></tr><tr><td>컴퓨터활용능력(2급)</td><td style='text-align:right;'>5명</td></tr><tr><td>주산</td><td style='text-align:right;'>4명</td></tr><tr><td>한글타자</td><td style='text-align:right;'>3명</td></tr><tr><td>양식조리(기능사)</td><td style='text-align:right;'>2명</td></tr><tr><td>부기</td><td style='text-align:right;'>2명</td></tr><tr><td>건축도장(기능사)</td><td style='text-align:right;'>2명</td></tr><tr><td>영문타자</td><td style='text-align:right;'>2명</td></tr><tr><td>제과(기능사)</td><td style='text-align:right;'>1명</td></tr><tr><td>제빵(기능사)</td><td style='text-align:right;'>1명</td></tr><tr><td>중식조리(기능사)</td><td style='text-align:right;'>1명</td></tr><tr><td>컴퓨터그래픽스운용(기능사)</td><td style='text-align:right;'>1명</td></tr><tr><td>지게차운전(기능사)</td><td style='text-align:right;'>1명</td></tr><tr><td>컴퓨터활용능력(3급)</td><td style='text-align:right;'>1명</td></tr><tr><td>한식조리(기능사)</td><td style='text-align:right;'>1명</td></tr></tbody></table>
+  </div>
+</div>
+
+<h2>💼 진출 직업 (한국표준직업분류 소분류 기준) — 학과 공식 TOP3 vs 실제 KEDI TOP5</h2>
+<p style="font-size:12px;color:#718096;margin-bottom:8px;">※ KEDI 원본 시트명은 "직무정보"이나 실제 내용은 한국표준직업분류(KSCO) 소분류 기준의 직업명입니다.</p>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+  <div>
+    <h4>학과 공식 진출 직업 TOP3 (PDF)</h4>
+    <ol style="margin-left:20px;"><li><strong>1순위:</strong> 공인중개사</li><li><strong>2순위:</strong> 감정평가사</li><li><strong>3순위:</strong> 주택관리사</li></ol>
+  </div>
+  <div>
+    <h4>실제 KEDI 진출 직업 TOP5</h4>
+    <ul style="margin-left:20px;"><li>경영지원 사무원 <span style='color:#718096;'>(15명)</span></li><li>안내·고객상담·통계·비서·사무보조 및 기타 사무원 <span style='color:#718096;'>(4명)</span></li><li>금융·보험 사무원 <span style='color:#718096;'>(4명)</span></li><li>판매 종사자 <span style='color:#718096;'>(4명)</span></li><li>식당 서비스원 <span style='color:#718096;'>(2명)</span></li></ul>
+  </div>
+</div>
+
+<h2>🏢 주요 취업 기업 (KEDI 기준 인원 순)</h2>
+<table>
+  <thead><tr><th>기업명</th><th style='text-align:right;'>인원</th></tr></thead>
+  <tbody><tr><td>명지전문대학</td><td style='text-align:right;'>3명</td></tr><tr><td>주식회사 마라나타스토리 놀라운공매</td><td style='text-align:right;'>3명</td></tr><tr><td>제이원자산관리주식회사</td><td style='text-align:right;'>2명</td></tr><tr><td>주식회사우아한청년들</td><td style='text-align:right;'>2명</td></tr><tr><td>(주)골드운수</td><td style='text-align:right;'>1명</td></tr><tr><td>(주)스시히로바</td><td style='text-align:right;'>1명</td></tr><tr><td>(주)삼창감정평가법인</td><td style='text-align:right;'>1명</td></tr><tr><td>(주)비케이알</td><td style='text-align:right;'>1명</td></tr><tr><td>(주)미동이엔씨</td><td style='text-align:right;'>1명</td></tr><tr><td>(주)에이치알비젼</td><td style='text-align:right;'>1명</td></tr><tr><td>(주)스와로브스키코리아</td><td style='text-align:right;'>1명</td></tr><tr><td>(주)에스티이엔씨</td><td style='text-align:right;'>1명</td></tr><tr><td>(주)애플테크</td><td style='text-align:right;'>1명</td></tr><tr><td>(주)원플라텍</td><td style='text-align:right;'>1명</td></tr><tr><td>(주)웰페리온</td><td style='text-align:right;'>1명</td></tr></tbody>
+</table>
+
+<div class="footer">생성: 2026-05-15</div>
+</div>
+</body>
+</html>

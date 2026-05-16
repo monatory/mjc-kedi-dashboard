@@ -1,0 +1,27 @@
+# ===== 원본 데이터 (학과별 통계 보호) =====
+*.xlsx
+*.xls
+*.xlsm
+*.csv
+
+# ===== 대용량·중복 산출물 =====
+보고서_PDF/
+보고서_PPT/
+보고서_Word/
+
+# ===== 임시 파일 =====
+~$*
+.DS_Store
+Thumbs.db
+*.tmp
+*.bak
+
+# ===== OS 시스템 파일 =====
+desktop.ini
+$RECYCLE.BIN/
+
+# ===== IDE / 에디터 =====
+.vscode/
+.idea/
+*.swp
+*.swo
